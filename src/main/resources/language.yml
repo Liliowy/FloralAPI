@@ -1,0 +1,8 @@
+# FloralAPI Language File #
+
+prefix: "&8[&dFloralAPI&8]"
+no-permission: "%prefix &cYou do not have permission to do this!"
+player-not-found: "%prefix% &cThis player is not online!"
+player-only: "%prefix% &cThe console cannot use this command!"
+reloaded: "%prefix% &aReloaded."
+command-reload-description: "Reloads the plugin files."

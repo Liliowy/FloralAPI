@@ -6,11 +6,23 @@ group 'me.lilac.floralapi'
 version '1.0.0'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
+
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compileOnly 'org.spigotmc:spigot:1.14.4-R0.1-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.10.4'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+}
+
+jar {
+    baseName 'FloralAPI-1.0.0'
 }
