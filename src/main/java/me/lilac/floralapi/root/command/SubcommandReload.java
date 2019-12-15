@@ -6,16 +6,26 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
+/**
+ * A subcommand example. E.g. /command reload.
+ */
 public class SubcommandReload extends AbstractSubcommand {
 
+    /**
+     * Creates a new subcommand with the argument 'reload'/
+     */
     public SubcommandReload() {
         super("reload");
     }
-
+    /**
+     * Calls the reload function in the main class and sends a nice message to the sender.
+     * @param sender The player or console that entered the command.
+     * @param args The arguments sent with the command.
+     */
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         FloralPlugin.getInstance().reload();
-        sender.sendMessage(new LocalizedText("reloaded").withPrefix().format());
+        sender.sendMessage(new LocalizedText("reloaded").withPrefixPlaceholder().format());
     }
 
     @Override
@@ -25,7 +35,7 @@ public class SubcommandReload extends AbstractSubcommand {
 
     @Override
     public String getPermission() {
-        return FloralPlugin.getInstance().getPluginName() + ".reload";
+        return FloralPlugin.getInstance().getPluginTitle() + ".reload";
     }
 
     @Override

@@ -10,7 +10,6 @@ targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
-    mavenCentral()
 
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
@@ -24,5 +23,5 @@ dependencies {
 }
 
 jar {
-    baseName 'FloralAPI-1.0.0'
+    baseName 'Name'
 }

@@ -1,98 +1,186 @@
 package me.lilac.floralapi.root;
 
+import me.lilac.floralapi.petal.gui.GUIManager;
+import me.lilac.floralapi.root.storage.SQLDatabase;
 import me.lilac.floralapi.root.storage.YMLFile;
-import me.lilac.floralapi.root.utils.LocalizedText;
-import net.milkbowl.vault.economy.Economy;
+import me.lilac.floralapi.root.utils.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Main class for FloralAPI.
+ * Every plugin utilising FloralAPI should extend this class.
+ * It's nice to implement each module, but not necessary.
+ */
 public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
 
+    /**
+     * An instance of this class.
+     */
     private static FloralPlugin instance;
-    private YMLFile configFile;
-    private YMLFile languageFile;
-    private boolean hasPlaceholderAPI;
-    private boolean hasVault;
+
+    /**
+     * The files that should be used by every floral plugin.
+     */
+    private YMLFile configFile, languageFile;
+
+    /**
+     * An instance of the Economy class.
+     */
     private Economy economy;
 
-    // Called when the plugin starts.
+    /**
+     * An instance of the SQLDatabase class.
+     */
+    private SQLDatabase sqlDatabase;
+
+    /**
+     * An instance of the GUIManager class.
+     */
+    private GUIManager guiManager;
+
+    /**
+     * Whether or not the server has PlaceholderAPI installed.
+     */
+    private boolean hasPlaceholderAPI;
+
+    /**
+     * Called when the plugin starts up.
+     */
     public abstract void onStartUp();
 
-    // Called when the plugin stops.
+    /**
+     * Called when the plugin shuts down.
+     */
     public abstract void onShutDown();
 
-    // Called when the reload command is used.
+    /**
+     * Called when the plugin is reloaded via the reload subcommand.
+     */
     public abstract void onReload();
 
+    /**
+     * Called when the plugin is enabled.
+     */
     @Override
     public void onEnable() {
         instance = this;
 
-        Bukkit.getConsoleSender().sendMessage(new LocalizedText(getPluginTitle() + " &fimplementing " + getAPIs()).format());
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) hasPlaceholderAPI = true;
-        if (Bukkit.getPluginManager().getPlugin("Vault") != null) hasVault = true;
-        economy = setupEconomy();
 
-        onStartUp();
         reload();
+        onStartUp();
     }
 
+    /**
+     * Called when the plugin is disabled.
+     */
     @Override
     public void onDisable() {
-        Bukkit.getConsoleSender().sendMessage(new LocalizedText(getPluginTitle() + " &fGoodbye. :waves:").format());
         onShutDown();
     }
 
+    /**
+     * Typically reloads the plugin files.
+     * Called when the plugin is reloaded via the reload subcommand.
+     */
     public void reload() {
         configFile = new YMLFile("config");
         languageFile = new YMLFile("language");
         onReload();
     }
 
-    // Returns the name of the plugin.
-    public String getPluginName() {
+    /**
+     * Sets up the Economy class. Allows VaultAPI to be used.
+     * @return An instance of the Economy class.
+     */
+    public Economy setupEconomy() {
+        return economy = new Economy();
+    }
+
+    /**
+     * Sets up the SQLDatabase class. Allows SQL to be used.
+     * @return An instance of the SQLDatabase class.
+     */
+    public SQLDatabase setupDatabase() {
+        return sqlDatabase = new SQLDatabase();
+    }
+
+    /**
+     * Sets up the GUIManager class. Allows GUIs to be used.
+     * @return An instance of the GUIManager class.
+     */
+    public GUIManager setupGUIManager() {
+        return guiManager = new GUIManager();
+    }
+
+    /**
+     * Gets the title of the plugin directly from the plugin.yml file.
+     * @return The title of the plugin.
+     */
+    public String getPluginTitle() {
         return getDescription().getName();
     }
 
-    private Economy setupEconomy() {
-        if (!hasVault) return null;
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) return null;
-        return rsp.getProvider();
-    }
+    /**
+     * Gets the display name of the plugin. Typically used for internal prefixes.
+     * @return The display name of the plugin.
+     */
+    public abstract String getPluginName();
 
-    // Returns a friendly name, usually with brackets.
-    public abstract String getPluginTitle();
-
-    // Returns all the APIs this plugin is using.
-    public abstract String getAPIs();
-
-    // Returns the configuration file.
-    public YMLFile getConfigFile() {
-        return configFile;
-    }
-
-    // Returns the language file.
-    public YMLFile getLanguageFile() {
-        return languageFile;
-    }
-
-    // Does the server have PlaceholderAPI installed?
+    /**
+     * Gets whether or not the server has the PlaceholderAPI plugin installed.
+     * @return True if the server has PlaceholderAPI installed.
+     */
     public boolean hasPlaceholderAPI() {
         return hasPlaceholderAPI;
     }
 
-    // Does the server have vault installed?
-    public boolean hasVault() {
-        return hasVault;
+    /**
+     * Gets an instance of this class.
+     * @return An instance of this class.
+     */
+    public static FloralPlugin getInstance() {
+        return instance;
     }
 
+    /**
+     * Gets the general configuration file.
+     * @return An instance of the general configuration file (config.yml).
+     */
+    public YMLFile getConfigFile() {
+        return configFile;
+    }
+
+    /**
+     * Gets the language file.
+     * @return An instance of the language file (language.yml).
+     */
+    public YMLFile getLanguageFile() {
+        return languageFile;
+    }
+
+    /**
+     * Gets the Economy.
+     * @return An instance of the Economy class. Needed to use Vault Economy.
+     */
     public Economy getEconomy() {
         return economy;
     }
 
-    public static FloralPlugin getInstance() {
-        return instance;
+    /**
+     * Gets the SQLDatabase.
+     * @return An instance of the SQLDatabase class. Needed to use SQL.
+     */
+    public SQLDatabase getSqlDatabase() {
+        return sqlDatabase;
+    }
+
+    /**
+     * Gets the GUIManager.
+     * @return An instance of the GUIManager class. Needed to use GUIs.
+     */
+    public GUIManager getGuiManager() {
+        return guiManager;
     }
 }

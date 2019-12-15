@@ -1,9 +1,15 @@
 package me.lilac.floralapi.root;
 
+/**
+ * FloralAPI's Base API/
+ */
 public interface RootPlugin {
 
-    // Defines the version of the Root API.
+    /**
+     * Gets the version of the Root API.
+     * @return The version of the Root API.
+     */
     default String getRootVersion() {
-        return "1.0.0";
+        return "1.1.0";
     }
 }
