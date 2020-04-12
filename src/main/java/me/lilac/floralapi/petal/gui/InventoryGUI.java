@@ -40,6 +40,11 @@ public abstract class InventoryGUI implements Listener {
     private int size;
 
     /**
+     * Whether or not this inventory is fully editable by default.
+     */
+    private boolean editable;
+
+    /**
      * The pages this gui has.
      */
     private List<Inventory> pages;
@@ -71,18 +76,13 @@ public abstract class InventoryGUI implements Listener {
 
         this.plugin = FloralPlugin.getInstance();
 
-        for (int i = 0; i < pages; i++) {
-            this.pages.add(Bukkit.createInventory(new GUIHolder(), size, this.title));
-            clickables.add(new ClickablePage());
-        }
+        for (int i = 0; i < pages; i++) addPage(size, title);
     }
 
     /**
      * Called when the GUI is registered.
-     * Adds the items to the array.
      */
     public void onRegister() {
-        addItems();
     }
 
     /**
@@ -93,6 +93,16 @@ public abstract class InventoryGUI implements Listener {
     public void open(Player player, int page) {
         player.openInventory(this.pages.get(page));
         playerPages.put(player.getUniqueId(), page);
+    }
+
+    /**
+     * Adds a new inventory page.
+     * @param size The size of the new page.
+     * @param title The title of the new page.
+     */
+    public void addPage(int size, LocalizedText title) {
+        this.pages.add(Bukkit.createInventory(new GUIHolder(), size, title.format()));
+        clickables.add(new ClickablePage());
     }
 
     /**
@@ -107,8 +117,19 @@ public abstract class InventoryGUI implements Listener {
      * @param item The item to add.
      */
     public void addItem(int page, int slot, InventoryItem item) {
-        pages.get(page).setItem(slot, item.getItem());
-        clickables.get(page).getClickables().add(new Clickable(slot, item));
+        addItem(page, slot, item, EditableState.NONE);
+    }
+
+    /**
+     * Adds an item to the inventory, specifying an editable state.
+     * @param page The page to add the item to.
+     * @param slot The slot to add the item in.
+     * @param item The item to add.
+     * @param state How this item can be edited.
+     */
+    public void addItem(int page, int slot, InventoryItem item, EditableState state) {
+        if (item.getItem() != null) pages.get(page).setItem(slot, item.getItem());
+        clickables.get(page).getClickables().add(new Clickable(slot, item, state));
     }
 
     /**
@@ -129,6 +150,21 @@ public abstract class InventoryGUI implements Listener {
      */
     public void setBorder(ItemStack item) {
         for (int i = 0; i < pages.size(); i++) setBorder(i, item);
+    }
+
+    /**
+     * Refreshes the GUI, adds all items again.
+     */
+    public void refreshGUI() {
+        addItems();
+    }
+
+    /**
+     * Sets this inventory as editable.
+     * @param editable Whether or not this inventory can be edited (excludes added itemw).
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 
     /**
@@ -153,6 +189,13 @@ public abstract class InventoryGUI implements Listener {
     }
 
     /**
+     * @return Whether or not this GUI is editable by default.
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+
+    /**
      * @return The pages of this GUI.
      */
     public List<Inventory> getPages() {
@@ -160,10 +203,37 @@ public abstract class InventoryGUI implements Listener {
     }
 
     /**
+     * Gets a specific page from the GUI.
+     * @param page The page to get.
+     * @return The page found.
+     */
+    public Inventory getPage(int page) {
+       return getPages().get(page);
+    }
+
+    /**
      * @return The pages last opened by players.
      */
     public Map<UUID, Integer> getPlayerPages() {
         return playerPages;
+    }
+
+    /**
+     * Gets the page number for a player.
+     * @param uuid The player to get.
+     * @return The page that this player has open.
+     */
+    public int getPlayerPageNumber(UUID uuid) {
+        return getPlayerPages().get(uuid);
+    }
+
+    /**
+     * Gets the inventory that a player has open.
+     * @param uuid The player to get.
+     * @return The inventory that this player has open.
+     */
+    public Inventory getPlayerPage(UUID uuid) {
+        return getPage(getPlayerPageNumber(uuid));
     }
 
     /**

@@ -14,18 +14,11 @@ public abstract class InventoryItem {
     private ItemStack item;
 
     /**
-     * Whether or not this item can be removed from the GUI.
-     */
-    private boolean isRemoveable;
-
-    /**
      * Creates a new inventory item.
      * @param item The ItemStack to use.
-     * @param removable Whether or not this item can be removed from the GUI.
      */
-    public InventoryItem(ItemStack item, boolean removable) {
+    public InventoryItem(ItemStack item) {
         this.item = item;
-        this.isRemoveable = removable;
     }
 
     /**
@@ -39,13 +32,6 @@ public abstract class InventoryItem {
      */
     public ItemStack getItem() {
         return item;
-    }
-
-    /**
-     * @return True if this item can be removed from the inventory.
-     */
-    public boolean isRemoveable() {
-        return isRemoveable;
     }
 }
 

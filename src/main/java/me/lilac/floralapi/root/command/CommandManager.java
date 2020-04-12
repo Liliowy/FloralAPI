@@ -36,12 +36,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      * The main command.
      * Optional. Used for overriding the main help command.
      */
-    private AbstractSubcommand mainCommand;
+    private AbstractCommand mainCommand;
 
     /**
      * A list of subcommands used by this command.
      */
-    private List<AbstractSubcommand> subcommands;
+    private List<AbstractCommand> subcommands;
 
     /**
      * Creates a new instance of the CommandManager.
@@ -63,8 +63,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      * This creates a new command.
      * @param mainCommand The main command to run. This is used instead of the default help command.
      */
-    public CommandManager(AbstractSubcommand mainCommand) {
-        this(mainCommand.getLabel(), mainCommand.getSyntax());
+    public CommandManager(AbstractCommand mainCommand) {
+        this(mainCommand.getLabels().get(0), mainCommand.getSyntax());
         this.mainCommand = mainCommand;
     }
 
@@ -81,16 +81,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        for (AbstractSubcommand subcommand : subcommands) {
-            if (!args[0].equalsIgnoreCase(subcommand.getLabel())) continue;
+        for (AbstractCommand subcommand : subcommands) {
+            if (!subcommand.getLabels().contains(args[0].toLowerCase())) continue;
             if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) {
                 sender.sendMessage(new LocalizedText("no-permission").withPrefixPlaceholder().format());
-                continue;
+                return false;
             }
 
             if (subcommand.isPlayerOnly() && !(sender instanceof Player)) {
                 sender.sendMessage(new LocalizedText("player-only").withPrefixPlaceholder().format());
-                continue;
+                return false;
             }
 
             subcommand.onCommand(sender, truncateArgs(args));
@@ -110,28 +110,39 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         if (mainCommand != null) return mainCommand.onTab(sender, args);
 
         if (args.length == 1) {
-            for (AbstractSubcommand subcommand : subcommands) {
+            for (AbstractCommand subcommand : subcommands) {
                 if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) continue;
                 if (!subcommand.isPlayerOnly() && !(sender instanceof Player)) continue;
-                if (subcommand.getLabel().contains(args[0])) tab.add(subcommand.getLabel());
+
+                for (String label : subcommand.getLabels()) {
+                    if (label.contains(args[0].toLowerCase())) {
+                        tab.add(subcommand.getLabels().get(0));
+                    }
+                }
             }
 
             return tab;
         }
 
-        for (AbstractSubcommand subcommand : subcommands) {
-            if (!args[0].equalsIgnoreCase(subcommand.getLabel())) continue;
-            if (!sender.hasPermission(subcommand.getPermission())) continue;;
-            if (subcommand.getPermission() != null && !subcommand.isPlayerOnly() && !(sender instanceof Player)) continue;
+        for (AbstractCommand subcommand : subcommands) {
+            if (!subcommand.getLabels().contains(args[0].toLowerCase())) continue;
+            if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) continue;;
+            if (!subcommand.isPlayerOnly() && !(sender instanceof Player)) continue;
             tab = subcommand.onTab(sender, truncateArgs(args));
 
             if (tab == null) return new ArrayList<>();
 
             if (tab.contains("players")) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (player.getName().contains(args[0])) tab.add(player.getName());
+                List<String> playerfulTab = new ArrayList<>();
+
+                for (String str : tab) {
+                    if (!str.equalsIgnoreCase("players")) playerfulTab.add(str);
                 }
-                tab.remove("players");
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.getName().contains(args[0])) playerfulTab.add(player.getName());
+                }
+                return playerfulTab;
             }
 
             return tab;
@@ -162,10 +173,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      */
     private void displayHelpMessage(CommandSender sender) {
         sender.sendMessage(new LocalizedText("prefix").format());
-        for (AbstractSubcommand subcommand : subcommands) {
+        for (AbstractCommand subcommand : subcommands) {
             if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) continue;
-            sender.sendMessage(new LocalizedText("&d/" + mainCommandLabel + " " + subcommand.getSyntax() + " &7- ").format() +
-                    new LocalizedText("command-" + subcommand.getLabel() + "-description").format());
+            sender.sendMessage(new LocalizedText(new LocalizedText("command-color").format() +
+                    "/" + mainCommandLabel + " " + subcommand.getSyntax() + " &7- ").format() +
+                    new LocalizedText("command-" + subcommand.getLabels().get(0) + "-description").format());
         }
     }
 
@@ -174,7 +186,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      * @param subcommand The subcommand to add.
      * @return An instance of this class.
      */
-    public CommandManager addSubcommand(AbstractSubcommand subcommand) {
+    public CommandManager addSubcommand(AbstractCommand subcommand) {
         this.subcommands.add(subcommand);
         return this;
     }
@@ -183,7 +195,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      * Gets the subcommands for this command.
      * @return A list of subcommands for this command.
      */
-    public List<AbstractSubcommand> getSubcommands() {
+    public List<AbstractCommand> getSubcommands() {
         return subcommands;
     }
 
@@ -191,7 +203,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      * Gets the overriden main command.
      * @return The overriden main command.
      */
-    public AbstractSubcommand getMainCommand() {
+    public AbstractCommand getMainCommand() {
         return mainCommand;
     }
 

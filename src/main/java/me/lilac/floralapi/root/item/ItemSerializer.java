@@ -168,7 +168,7 @@ public class ItemSerializer {
      * @return The Base64 String obtained from the ItemStacks.
      * @throws IOException
      */
-    public static String toBase64(ItemStack[] items) throws IOException {
+    public static String toBase64(ItemStack[] items) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);

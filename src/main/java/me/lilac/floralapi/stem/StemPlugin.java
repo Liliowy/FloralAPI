@@ -10,6 +10,6 @@ public interface StemPlugin {
      * @return The version of the Stem API.
      */
     default String getStemVersion() {
-        return "1.0.0";
+        return "1.0.1";
     }
 }

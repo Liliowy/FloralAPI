@@ -9,13 +9,13 @@ import java.util.List;
 /**
  * A subcommand example. E.g. /command reload.
  */
-public class SubcommandReload extends AbstractSubcommand {
+public class CommandReload extends AbstractCommand {
 
     /**
      * Creates a new subcommand with the argument 'reload'/
      */
-    public SubcommandReload() {
-        super("reload");
+    public CommandReload() {
+        super("reload", "rl");
     }
     /**
      * Calls the reload function in the main class and sends a nice message to the sender.

@@ -1,18 +1,22 @@
 package me.lilac.floralapi.root.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * A subcommand to be used within a main command.
  */
-public abstract class AbstractSubcommand {
+public abstract class AbstractCommand {
 
     /**
      * The label for the subcommand.
      */
-    private String label;
+    private List<String> labels;
 
     /**
      * Is the subcommand player only, or can the console use it?
@@ -21,19 +25,19 @@ public abstract class AbstractSubcommand {
 
     /**
      * Creates a new subcommand with the given label.
-     * @param label The name of the subcommand. E.g. /command <label>.
+     * @param labels The names of the subcommand. E.g. /command <label>. Multiple for aliases.
      */
-    public AbstractSubcommand(String label) {
-        this.label = label;
+    public AbstractCommand(String... labels) {
+        this.labels = new ArrayList<>(Arrays.asList(labels));
     }
 
     /**
      * Creates a new subcommand.
-     * @param label The name of the subcommand. E.g. /command <label>.
+     * @param labels The names of the subcommand. E.g. /command <label>. Multiple for aliases.
      * @param playerOnly Whether or not this command can be used by only players, and not the console.
      */
-    public AbstractSubcommand(String label, boolean playerOnly) {
-        this.label = label;
+    public AbstractCommand(boolean playerOnly, String... labels) {
+        this.labels = new ArrayList<>(Arrays.asList(labels));
         this.playerOnly = playerOnly;
     }
 
@@ -41,8 +45,8 @@ public abstract class AbstractSubcommand {
      * Gets the command label.
      * @return The command label.
      */
-    public String getLabel() {
-        return label;
+    public List<String> getLabels() {
+        return labels;
     }
 
     /**
