@@ -5,8 +5,11 @@ import me.lilac.floralapi.petal.chat.ChatMessage;
 import me.lilac.floralapi.root.FloralPlugin;
 import me.lilac.floralapi.root.item.ItemPlaceholderManager;
 import me.lilac.floralapi.root.storage.YMLFile;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,9 +107,30 @@ public class LocalizedText {
      * @param player The player for the placeholders.
      * @return An instance of this class.
      */
-    public LocalizedText withPlaceholderAPI(OfflinePlayer player) {
-        if (!plugin.hasPlaceholderAPI()) text = PlaceholderAPI.setPlaceholders(player, text);
+    public LocalizedText withPlaceholderAPI(Player player) {
+        if (plugin.hasPlaceholderAPI()) text = PlaceholderAPI.setPlaceholders(player, text);
         return this;
+    }
+
+    /**
+     * Sets PlaceholderAPI placeholders in this text.
+     * @param player The player for the placeholders.
+     * @return An instance of this class.
+     */
+    public LocalizedText withPlaceholderAPI(OfflinePlayer player) {
+        if (plugin.hasPlaceholderAPI()) text = PlaceholderAPI.setPlaceholders(player, text);
+        return this;
+    }
+
+    /**
+     * Sets PlaceholderAPI placeholders in this text.
+     * @param sender The player for the placeholders.
+     * @return An instance of this class.
+     */
+    public LocalizedText withPlaceholderAPI(CommandSender sender) {
+        if (!(sender instanceof Player)) return this;
+        Player player = (Player) sender;
+        return withPlaceholderAPI(player);
     }
 
     /**
@@ -117,6 +141,28 @@ public class LocalizedText {
      */
     public LocalizedText withPlaceholder(String placeholder, String replaceWith) {
         text = text.replace("%" + placeholder + "%", replaceWith);
+        return this;
+    }
+
+    /**
+     * Sets a local placeholder in this text.
+     * @param placeholder The placeholder to replace, without the %.
+     * @param replaceWith The string to replace the placeholder.
+     * @return An instance of this class.
+     */
+    public LocalizedText withPlaceholder(String placeholder, double replaceWith) {
+        text = text.replace("%" + placeholder + "%", replaceWith + "");
+        return this;
+    }
+
+    /**
+     * Sets a local placeholder in this text.
+     * @param placeholder The placeholder to replace, without the %.
+     * @param replaceWith The string to replace the placeholder.
+     * @return An instance of this class.
+     */
+    public LocalizedText withPlaceholder(String placeholder, int replaceWith) {
+        text = text.replace("%" + placeholder + "%", replaceWith + "");
         return this;
     }
 
@@ -151,7 +197,38 @@ public class LocalizedText {
      * @return The text formatted with colour codes.
      */
     public String format() {
+        if (FloralPlugin.UNPAID_MODE) text = "(Unpaid) " + text;
         return ChatColor.translateAlternateColorCodes('&', text);
+    }
+
+    /**
+     * Sends the message to a command sender (console or player).
+     * @param sender The person who receives the message.
+     */
+    public void sendMessage(CommandSender sender) {
+        if (text != null || !text.isEmpty()) sender.sendMessage(format());
+    }
+
+    /**
+     * Makes the messagea debug message.
+     */
+    public LocalizedText asDebugMessage() {
+        this.text = "&b&l[&c&lDebug&b&l]&r " + this.text;
+        return this;
+    }
+
+    /**
+     * Sends a message to the console, without specifying sender.
+     */
+    public void sendConsoleMessage() {
+        if (text != null || !text.isEmpty()) Bukkit.getConsoleSender().sendMessage(format());
+    }
+
+    /**
+     * Broadcasts a message to the entire server.
+     */
+    public void broadcast() {
+        Bukkit.broadcastMessage(format());
     }
 
     /**

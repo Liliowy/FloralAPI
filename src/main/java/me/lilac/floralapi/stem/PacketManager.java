@@ -1,8 +1,8 @@
 package me.lilac.floralapi.stem;
 
-import net.minecraft.server.v1_14_R1.Packet;
+import net.minecraft.server.v1_15_R1.Packet;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class PacketManager {
      * @param packet The packet to send.
      * @param player The player to send the packet to.
      */
-    public void send(Packet<?> packet, Player player) {
+    public static void send(Packet<?> packet, Player player) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
@@ -26,7 +26,7 @@ public class PacketManager {
      * @param packet The packet to send.
      * @param players A list of players to send the packet to.
      */
-    public void send(Packet<?> packet, List<Player> players) {
+    public static void send(Packet<?> packet, List<Player> players) {
         for (Player player : players) send(packet, player);
     }
 
@@ -34,7 +34,7 @@ public class PacketManager {
      * Sends a packet to every online player.
      * @param packet The packet to send.
      */
-    public void send(Packet<?> packet) {
+    public static void send(Packet<?> packet) {
         for (Player player : Bukkit.getOnlinePlayers()) send(packet, player);
     }
 }

@@ -14,6 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
 
+    public static boolean UNPAID_MODE = false;
+
     /**
      * An instance of this class.
      */
@@ -92,6 +94,7 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
 
     /**
      * Sets up the Economy class. Allows VaultAPI to be used.
+     * Should be called onStartUp.
      * @return An instance of the Economy class.
      */
     public Economy setupEconomy() {
@@ -100,6 +103,7 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
 
     /**
      * Sets up the SQLDatabase class. Allows SQL to be used.
+     * Should be called onStartUp.
      * @return An instance of the SQLDatabase class.
      */
     public SQLDatabase setupDatabase() {
@@ -108,6 +112,7 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
 
     /**
      * Sets up the GUIManager class. Allows GUIs to be used.
+     * Should be called onReload if GUI has configurable options.
      * @return An instance of the GUIManager class.
      */
     public GUIManager setupGUIManager() {

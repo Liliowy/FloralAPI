@@ -1,19 +1,19 @@
 name: FloralAPI
-main: me.lilac.floralapi.FloralPlugin
+main: me.lilac.floralapi.plugin.FloralAPI
 version: 1.0.0
-api-version: 1.14
+api-version: 1.15
 description: A testing plugin for FloralAPI.
 author: Lilac
 softdepend: [Vault, PlaceholderAPI]
 commands:
-  command:
-    aliases: [cmd]
+  floralapi:
+    aliases: [floral]
     description: Main command for FloralAPI.
 permissions:
-  command.*:
+  floralapi.*:
     default: op
     children:
-      - command.use
-  command.use:
-    description: Allows a player to use /command.
+      - floralapi.use
+  floralapi.use:
+    description: Allows a player to use /floral.
     default: op

@@ -8,6 +8,10 @@ import org.bukkit.inventory.InventoryHolder;
  */
 public class GUIHolder implements InventoryHolder {
 
+    /**
+     * Gets the inventory this is holding.
+     * @return The inventory this is holding.
+     */
     @Override
     public Inventory getInventory() {
         return null;

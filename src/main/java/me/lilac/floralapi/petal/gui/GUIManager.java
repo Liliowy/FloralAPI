@@ -3,11 +3,15 @@ package me.lilac.floralapi.petal.gui;
 import me.lilac.floralapi.root.FloralPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,21 +52,37 @@ public class GUIManager implements Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getRawSlot() != event.getSlot()) return;
         if (!(event.getInventory().getHolder() instanceof GUIHolder)) return;
         String title = ChatColor.stripColor(event.getView().getTitle());
         Player player = (Player) event.getWhoClicked();
+        ItemStack current = event.getCurrentItem();
 
         for (InventoryGUI gui : inventories.values()) {
             if (!title.equalsIgnoreCase(ChatColor.stripColor(gui.getTitle()))) continue;
-            event.setCancelled(true);
             List<ClickablePage> clickablePages = gui.getClickables();
             int page = gui.getPlayerPages().get(player.getUniqueId());
             ClickablePage openPage = clickablePages.get(page);
 
+            if (current == null) event.setCancelled(!gui.isEditable());
+
             for (Clickable clickable : openPage.getClickables()) {
-                if (clickable.getSlot() != event.getSlot()) return;
+                if (clickable.getSlot() != event.getSlot()) continue;
                 InventoryItem item = clickable.getItem();
-                event.setCancelled(!item.isRemoveable());
+
+                if (current == null && event.getCursor().getType() != Material.AIR) {
+                    event.setCancelled(!(clickable.getState() == EditableState.IN || clickable.getState() == EditableState.SWAP));
+                }
+
+                if (current != null && event.getCursor().getType() == Material.AIR) {
+                    event.setCancelled(!(clickable.getState() == EditableState.OUT || clickable.getState() == EditableState.SWAP));
+                }
+
+                if (current != null && event.getCursor().getType() != Material.AIR) {
+                    event.setCancelled(clickable.getState() != EditableState.SWAP);
+                }
+
+                if (clickable.getState() == EditableState.NONE) event.setCancelled(true);
                 item.onClick(event);
                 break;
             }
@@ -73,7 +93,7 @@ public class GUIManager implements Listener {
 
     /**
      * Manages close events for every registered GUI.
-     * Used for deregistering dynamic GUIs.
+     * Used for unregistering dynamic GUIs.
      * @param event An InventoryCloseEvent.
      */
     @EventHandler
@@ -105,4 +125,5 @@ public class GUIManager implements Listener {
     public Map<String, InventoryGUI> getInventories() {
         return inventories;
     }
+
 }
