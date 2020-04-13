@@ -9,7 +9,7 @@ import java.util.List;
 public class CommandFloral extends AbstractCommand {
 
     public CommandFloral() {
-        super(true, "gui");
+        super(true, "gui", "gudie");
     }
 
     @Override

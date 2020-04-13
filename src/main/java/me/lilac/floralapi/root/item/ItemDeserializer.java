@@ -3,7 +3,6 @@ package me.lilac.floralapi.root.item;
 import me.lilac.floralapi.root.storage.YMLFile;
 import me.lilac.floralapi.root.utils.LocalizedText;
 import me.lilac.floralapi.petal.item.ItemBuilder;
-import me.lilac.floralapi.root.item.ItemPlaceholderManager;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;

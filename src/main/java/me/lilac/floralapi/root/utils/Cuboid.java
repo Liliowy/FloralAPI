@@ -4,6 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
+/**
+ * Utility class used for creating cuboids within a world.
+ */
 public class Cuboid {
 
     private Vector max;

@@ -29,13 +29,6 @@ public class SQLDatabase {
     }
 
     public void openConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) return;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-        }
-
         synchronized (this) {
             try {
                 if (connection != null && !connection.isClosed()) return;

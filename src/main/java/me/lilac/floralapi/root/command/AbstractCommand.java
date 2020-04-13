@@ -1,8 +1,7 @@
 package me.lilac.floralapi.root.command;
 
-import org.bukkit.Bukkit;
+import me.lilac.floralapi.root.FloralPlugin;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +28,18 @@ public abstract class AbstractCommand {
      */
     public AbstractCommand(String... labels) {
         this.labels = new ArrayList<>(Arrays.asList(labels));
+    }
+
+    public AbstractCommand(String label, boolean isSeniorCommand) {
+        this.labels = new ArrayList<>();
+        labels.add(label);
+        List<String> aliases = (List<String>) FloralPlugin.getInstance().getDescription().getCommands().get(label).get("aliases");
+        labels.addAll(aliases);
+    }
+
+    public AbstractCommand(String label, boolean playerOnly, boolean isSeniorCommand) {
+        this(label);
+        this.playerOnly = playerOnly;
     }
 
     /**
@@ -85,4 +96,13 @@ public abstract class AbstractCommand {
      * @return The syntax for this command.
      */
     public abstract String getSyntax();
+
+    public String getAllArgs(int startArg, String[] args) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = startArg; i < args.length; i++) {
+            builder.append(args[i]).append(" ");
+        }
+
+        return builder.toString().trim();
+    }
 }

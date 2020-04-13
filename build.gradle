@@ -3,23 +3,24 @@ plugins {
 }
 
 group 'me.lilac.floralapi'
-version '1.0.0'
+version '1.0.3'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenLocal()
+    mavenCentral()
+    jcenter()
 
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://repo.codemc.org/repository/nms' }
     maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
-    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://ci.ender.zone/plugin/repository/everything' }
 }
 
 dependencies {
     compileOnly 'org.spigotmc:spigot:1.15.2-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.10.4'
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
 }
 
 jar {

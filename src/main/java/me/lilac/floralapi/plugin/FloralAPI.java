@@ -2,13 +2,18 @@ package me.lilac.floralapi.plugin;
 
 import me.lilac.floralapi.root.FloralPlugin;
 import me.lilac.floralapi.root.command.CommandManager;
+import me.lilac.floralapi.root.command.CommandReload;
 
+/**
+ * Testing & Example Plugin
+ */
 public class FloralAPI extends FloralPlugin {
 
     @Override
     public void onStartUp() {
-        UNPAID_MODE = true; // REMOVE IF CUSTOMER HAS PAID FOR PLUGIN.
-        new CommandManager("floralapi", "/floralapi help").addSubcommand(new CommandFloral());
+        new CommandManager("floralapi", "/floralapi help")
+                .addSubcommand(new CommandFloral())
+                .addSubcommand(new CommandReload());
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,44 +108,54 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String cmd, String[] args) {
         List<String> tab = new ArrayList<>();
 
-        if (mainCommand != null) return mainCommand.onTab(sender, args);
-
-        if (args.length == 1) {
-            for (AbstractCommand subcommand : subcommands) {
-                if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) continue;
-                if (!subcommand.isPlayerOnly() && !(sender instanceof Player)) continue;
-
-                for (String label : subcommand.getLabels()) {
-                    if (label.contains(args[0].toLowerCase())) {
-                        tab.add(subcommand.getLabels().get(0));
-                    }
-                }
-            }
+        if (mainCommand != null) {
+            for (int i = 0; i < args.length; i++)
+                StringUtil.copyPartialMatches(args[i], mainCommand.onTab(sender, args), tab);
 
             return tab;
         }
 
+        if (args.length == 1) {
+            List<String> labels = new ArrayList<>();
+
+            for (AbstractCommand subcommand : subcommands) {
+                if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) continue;
+                if (!subcommand.isPlayerOnly() && !(sender instanceof Player)) continue;
+                labels.add(subcommand.getLabels().get(0));
+            }
+
+            StringUtil.copyPartialMatches(args[0], labels, tab);
+
+            return tab;
+        }
+
+        List<String> temp;
+        List<String> players = new ArrayList<>();
         for (AbstractCommand subcommand : subcommands) {
             if (!subcommand.getLabels().contains(args[0].toLowerCase())) continue;
             if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) continue;;
             if (!subcommand.isPlayerOnly() && !(sender instanceof Player)) continue;
-            tab = subcommand.onTab(sender, truncateArgs(args));
+            temp = subcommand.onTab(sender, truncateArgs(args));
 
-            if (tab == null) return new ArrayList<>();
+            if (temp == null) return new ArrayList<>();
 
-            if (tab.contains("players")) {
-                List<String> playerfulTab = new ArrayList<>();
-
-                for (String str : tab) {
-                    if (!str.equalsIgnoreCase("players")) playerfulTab.add(str);
+            if (temp.contains("players")) {
+                for (String str : temp) {
+                    if (!str.equalsIgnoreCase("players")) players.add(str);
                 }
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (player.getName().contains(args[0])) playerfulTab.add(player.getName());
+                    players.add(player.getName());
                 }
-                return playerfulTab;
+
+                for (int i = 0; i < args.length; i++)
+                    StringUtil.copyPartialMatches(args[i], players, tab);
+
+                return tab;
             }
 
+            for (int i = 0; i < args.length; i++)
+                StringUtil.copyPartialMatches(args[i], temp, tab);
             return tab;
         }
 
@@ -171,7 +182,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      * Sends a default help message to the sender.
      * @param sender The player or console who sent the command.
      */
-    private void displayHelpMessage(CommandSender sender) {
+    public void displayHelpMessage(CommandSender sender) {
         sender.sendMessage(new LocalizedText("prefix").format());
         for (AbstractCommand subcommand : subcommands) {
             if (subcommand.getPermission() != null && !sender.hasPermission(subcommand.getPermission())) continue;
@@ -212,7 +223,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
      * @return The main command label.
      */
     public String getMainCommandLabel() {
-        return mainCommandLabel;
+        if (mainCommand == null) {
+            return mainCommandLabel;
+        } else {
+            return mainCommand.getLabels().get(0);
+        }
     }
 
     /**

@@ -184,7 +184,11 @@ public class LocalizedText {
         return withPrefixPlaceholder();
     }
 
-
+    /**
+     * Adds an ItemPlaceholderManager to this localized text.
+     * @param ipm The IPM to add.
+     * @return An instance of this class.
+     */
     public LocalizedText withIPM(ItemPlaceholderManager ipm) {
         if (ipm == null || ipm.getPlaceholders().isEmpty()) return this;
         for (String placeholder : ipm.getPlaceholders().keySet())
