@@ -6,7 +6,6 @@ package me.lilac.floralapi.leaf;
 public interface LeafPlugin {
 
     /**
-     * Gets the version of the Leaf API.
      * @return The version of the Leaf API.
      */
     default String getLeafVersion() {

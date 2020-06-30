@@ -96,6 +96,15 @@ public abstract class InventoryGUI implements Listener {
     }
 
     /**
+     * Opens page 0 for a player.
+     * @param player The player to open the GUI for.
+     */
+    public void open(Player player) {
+        player.openInventory(this.pages.get(0));
+        playerPages.put(player.getUniqueId(), 0);
+    }
+
+    /**
      * Adds a new inventory page.
      * @param size The size of the new page.
      * @param title The title of the new page.
@@ -156,7 +165,21 @@ public abstract class InventoryGUI implements Listener {
      * Refreshes the GUI, adds all items again.
      */
     public void refreshGUI() {
+        for (Inventory inv : getPages()) inv.clear();
         addItems();
+    }
+
+    /**
+     * Calculates the inventory size (a multiple of nine) based on the given input.
+     * @param inSize The size to calculate from.
+     * @return The correct inventory size (multiple of nine).
+     */
+    public int getSizeBy9(int inSize) {
+        for (int i = 9; i < 54; i += 9) {
+            if (inSize > i) return i;
+        }
+
+        return 27;
     }
 
     /**

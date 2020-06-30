@@ -1,6 +1,7 @@
 package me.lilac.floralapi.root.utils;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.lilac.floralapi.petal.chat.ChatComponent;
 import me.lilac.floralapi.petal.chat.ChatMessage;
 import me.lilac.floralapi.root.FloralPlugin;
 import me.lilac.floralapi.root.item.ItemPlaceholderManager;
@@ -32,6 +33,7 @@ public class LocalizedText {
 
     /**
      * Creates a new LocalizedText object with the given parameter.
+     * If the language file contains the string, gets the string from the language file.
      * @param text The text to be localized and formatted.
      */
     public LocalizedText(String text) {
@@ -151,8 +153,7 @@ public class LocalizedText {
      * @return An instance of this class.
      */
     public LocalizedText withPlaceholder(String placeholder, double replaceWith) {
-        text = text.replace("%" + placeholder + "%", replaceWith + "");
-        return this;
+        return withPlaceholder(placeholder, replaceWith + "");
     }
 
     /**
@@ -162,8 +163,27 @@ public class LocalizedText {
      * @return An instance of this class.
      */
     public LocalizedText withPlaceholder(String placeholder, int replaceWith) {
-        text = text.replace("%" + placeholder + "%", replaceWith + "");
-        return this;
+        return withPlaceholder(placeholder, replaceWith + "");
+    }
+
+    /**
+     * Sets a local placeholder in this text.
+     * @param placeholder The placeholder to replace, without the %.
+     * @param replaceWith The string to replace the placeholder.
+     * @return An instance of this class.
+     */
+    public LocalizedText withPlaceholder(String placeholder, float replaceWith) {
+        return withPlaceholder(placeholder, replaceWith + "");
+    }
+
+    /**
+     * Sets a local placeholder in this text.
+     * @param placeholder The placeholder to replace, without the %.
+     * @param replaceWith The string to replace the placeholder.
+     * @return An instance of this class.
+     */
+    public LocalizedText withPlaceholder(String placeholder, long replaceWith) {
+        return withPlaceholder(placeholder, replaceWith + "");
     }
 
     /**
@@ -264,13 +284,16 @@ public class LocalizedText {
     }
 
     /**
-     * Converts the text to a ChatMessage, ready for hover and click events.
-     * @return The converted text as a ChatMessage.
+     * Converts the text to a ChatComponent, ready for hover and click events.
+     * @return The converted text as a ChatComponent.
      */
-    public ChatMessage toChatMessage() {
-        return new ChatMessage(text);
+    public ChatComponent toChatComponent() {
+        return new ChatComponent(text);
     }
 
+    /**
+     * @return The unformatted text.
+     */
     @Override
     public String toString() {
         return text;

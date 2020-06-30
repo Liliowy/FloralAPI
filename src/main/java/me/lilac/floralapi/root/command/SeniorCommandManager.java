@@ -4,6 +4,7 @@ import me.lilac.floralapi.root.utils.Language;
 import me.lilac.floralapi.root.utils.LocalizedText;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,19 +28,31 @@ public class SeniorCommandManager extends CommandManager {
      */
     public SeniorCommandManager(String mainCommandLabel, String mainSyntax) {
         super(mainCommandLabel, mainSyntax);
+        commandManagers = new ArrayList<>();
     }
 
     @Override
-    public void displayHelpMessage(CommandSender sender) {
-        sender.sendMessage(Language.PREFIX.getFormatted());
-
+    public void sendHelpMessage(CommandSender sender) {
+        sender.sendMessage(new LocalizedText("prefix").format());
         for (CommandManager manager : commandManagers) {
+            if (manager.getMainCommand() == null) {
+                String label = manager.getMainCommandLabel();
+                sender.sendMessage(new LocalizedText(
+                        Language.COLOR.getFormatted() + manager.getMainSyntax() + " &7- " +
+                                new LocalizedText("command-" + label + "-description").format()
+                ).format());
+
+                return;
+            }
+
             AbstractCommand command = manager.getMainCommand();
-            if (command.getPermission() != null && !sender.hasPermission(command.getPermission())) continue;
-            new LocalizedText(Language.COLOR.getFormatted() +
-                    "/" + manager.getMainCommandLabel() + " &7- " +
-                    new LocalizedText("command-" + manager.getMainCommandLabel() + "-description").format())
-                    .sendMessage(sender);
+            String label = command.getLabels().get(0);
+            sender.sendMessage(new LocalizedText(
+                    new LocalizedText(command.isJuniorCommand() ? label + "-command-color" : "command-color").format() +
+                            command.getSyntax() + " &7- ").format() +
+                    new LocalizedText((command.isJuniorCommand() ? label + "-command-" : "command-") + "" +
+                            command.getLabels().get(0) + "-description"
+                    ).format());
         }
     }
 

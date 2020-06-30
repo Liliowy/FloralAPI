@@ -6,5 +6,7 @@ player-not-found: "%prefix% &cThis player is not online!"
 player-only: "%prefix% &cThe console cannot use this command!"
 reloaded: "%prefix% &aReloaded."
 invalid-arguments: "%prefix% &cPlease use &7%syntax%."
+not-a-number: "%prefix% &cThis is not a number!"
+
 command-color: "&d"
 command-reload-description: "Reloads the plugin files."

@@ -37,11 +37,11 @@ public class ItemSerializer {
         Map<String, Object> data = new HashMap<>();
 
         data.put("material", stack.getType().toString());
-        data.put("amount", stack.getAmount());
+        if (stack.getAmount() != 1) data.put("amount", stack.getAmount());
         if (!stack.hasItemMeta()) return data;
         ItemMeta meta = stack.getItemMeta();
 
-        if (meta instanceof Damageable) data.put("durability", ((Damageable) meta).getDamage());
+        if (meta instanceof Damageable && ((Damageable) meta).getDamage() != 0) data.put("durability", ((Damageable) meta).getDamage());
         if (meta.hasDisplayName()) data.put("display-name", LocalizedText.serialize(meta.getDisplayName()));
         if (meta.hasLore()) data.put("lore", LocalizedText.serialize(meta.getLore()));
 
@@ -166,7 +166,6 @@ public class ItemSerializer {
      * Not intended for human reading or editing.
      * @param items The ItemStacks to serialize.
      * @return The Base64 String obtained from the ItemStacks.
-     * @throws IOException
      */
     public static String toBase64(ItemStack[] items) {
         try {

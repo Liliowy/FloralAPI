@@ -7,7 +7,7 @@ import org.bukkit.Location;
 /**
  * Basic functions within a utility class.
  */
-public class Utils {
+public class LocationUtils {
 
     /**
      * Serializes a location to a String.
@@ -84,6 +84,4 @@ public class Utils {
 
         return new Location(Bukkit.getWorld(world), x, y, z);
     }
-
-
 }

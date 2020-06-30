@@ -1,11 +1,16 @@
 package me.lilac.floralapi.root;
 
 import me.lilac.floralapi.petal.gui.GUIManager;
+import me.lilac.floralapi.root.storage.ConfigurationUpdater;
 import me.lilac.floralapi.root.storage.SQLDatabase;
 import me.lilac.floralapi.root.storage.YMLFile;
 import me.lilac.floralapi.root.utils.Economy;
+import me.lilac.floralapi.root.utils.LocalizedText;
+import me.lilac.floralapi.stem.NMSManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
 
 /**
  * Main class for FloralAPI.
@@ -14,6 +19,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
 
+    /**
+     * When working on a commission, should the plugin display an (unpaid) message next to sent messages?
+     */
     public static boolean UNPAID_MODE = false;
 
     /**
@@ -42,9 +50,24 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
     private GUIManager guiManager;
 
     /**
+     * An instance of the NMSManager class.
+     */
+    private NMSManager nmsManager;
+
+    /**
      * Whether or not the server has PlaceholderAPI installed.
      */
     private boolean hasPlaceholderAPI;
+
+    /**
+     * Whether or not the server has Vault installed.
+     */
+    private boolean hasVault;
+
+    /**
+     * Whether or not this plugin autosaves.
+     */
+    private boolean canAutosave;
 
     /**
      * Called when the plugin starts up.
@@ -69,6 +92,10 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
         instance = this;
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) hasPlaceholderAPI = true;
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) hasVault = true;
+
+        new ConfigurationUpdater(this, configFile);
+        new ConfigurationUpdater(this, languageFile);
 
         reload();
         onStartUp();
@@ -98,7 +125,21 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
      * @return An instance of the Economy class.
      */
     public Economy setupEconomy() {
+        if (!hasVault) {
+            new LocalizedText(getPluginTitle() + " &cVault was not found! This may cause issues with the plugin.");
+            return null;
+        }
+
         return economy = new Economy();
+    }
+
+    /**
+     * Sets up the NMSManager class. Allows common NMS functions to be used.
+     * Should be called onStartUp.
+     * @return An instance of the NMSManager class.
+     */
+    public NMSManager setupNMSManager() {
+        return nmsManager = new NMSManager();
     }
 
     /**
@@ -142,6 +183,21 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
     }
 
     /**
+     * Gets whether or not the sevrer has the Vault plugin installed.
+     * @return True if the server has Vault installed.
+     */
+    public boolean hasVault() {
+        return hasVault;
+    }
+
+    /**
+     * @return True if this plugin can autosave.
+     */
+    public boolean canAutosave() {
+        return canAutosave;
+    }
+
+    /**
      * Gets an instance of this class.
      * @return An instance of this class.
      */
@@ -174,7 +230,6 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
     }
 
     /**
-     * Gets the SQLDatabase.
      * @return An instance of the SQLDatabase class. Needed to use SQL.
      */
     public SQLDatabase getSqlDatabase() {
@@ -182,10 +237,16 @@ public abstract class FloralPlugin extends JavaPlugin implements RootPlugin {
     }
 
     /**
-     * Gets the GUIManager.
      * @return An instance of the GUIManager class. Needed to use GUIs.
      */
     public GUIManager getGuiManager() {
         return guiManager;
+    }
+
+    /**
+     * @return An instance of the NMSManager class.
+     */
+    public NMSManager getNmsManager() {
+        return nmsManager;
     }
 }

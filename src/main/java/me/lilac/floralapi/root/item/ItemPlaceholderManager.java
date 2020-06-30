@@ -1,5 +1,7 @@
 package me.lilac.floralapi.root.item;
 
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,10 +25,47 @@ public class ItemPlaceholderManager {
     /**
      * Adds a placeholder to the IPM.
      * @param placeholder The placeholder.
-     * @param replacer The string to replace with.
+     * @param replace The string to replace with.
      */
-    public void addPlaceholders(String placeholder, String replacer) {
-        placeholders.put(placeholder, replacer);
+    public ItemPlaceholderManager addPlaceholder(String placeholder, String replace) {
+        placeholders.put(placeholder, replace);
+        return this;
+    }
+
+    /**
+     * Adds a placeholder to the IPM.
+     * @param placeholder The placeholder.
+     * @param replace The int to replace with.
+     */
+    public ItemPlaceholderManager addPlaceholder(String placeholder, int replace) {
+        return addPlaceholder(placeholder, replace + "");
+    }
+
+    /**
+     * Adds a placeholder to the IPM.
+     * @param placeholder The placeholder.
+     * @param replace The double to replace with.
+     */
+    public ItemPlaceholderManager addPlaceholder(String placeholder, double replace) {
+        return addPlaceholder(placeholder, replace + "");
+    }
+
+    /**
+     * Adds a placeholder to the IPM.
+     * @param placeholder The placeholder.
+     * @param replace The float to replace with.
+     */
+    public ItemPlaceholderManager addPlaceholder(String placeholder, float replace) {
+        return addPlaceholder(placeholder, replace + "");
+    }
+
+    /**
+     * Adds a placeholder to the IPM.
+     * @param placeholder The placeholder.
+     * @param replace The long to replace with.
+     */
+    public ItemPlaceholderManager addPlaceholder(String placeholder, long replace) {
+        return addPlaceholder(placeholder, replace + "");
     }
 
     /**

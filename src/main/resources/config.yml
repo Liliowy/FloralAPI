@@ -2,3 +2,9 @@
 # Plugin by Lilac #########
 # General Configuration File #
 ##############################
+
+# Do not edit. #
+version: 1.0.0
+
+# Remove if the plugin does not autosave. #
+autosave-time: 10

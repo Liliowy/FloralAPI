@@ -13,14 +13,14 @@ public abstract class DynamicInventoryGUI extends InventoryGUI {
 
     /**
      * Creates a new InventoryGUI with the given parameters.
-     *
+     * The player UUID is added to the ID to create unique GUIs.
      * @param title The title of the GUI.
      * @param size  The size of the GUI.
      * @param pages How many pages the GUI has.
      * @param ID    The ID of the GUI.
      */
     public DynamicInventoryGUI(LocalizedText title, int size, int pages, String ID, Player player) {
-        super(title, size, pages, ID);
+        super(title, size, pages, ID + player.getUniqueId().toString());
         this.player = player;
     }
 
